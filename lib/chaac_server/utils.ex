@@ -20,4 +20,12 @@ defmodule ChaacServer.Utils do
     |> join
     |> String.downcase
   end
+
+  def checksum(file) do
+    File.stream!(file,[],2048) 
+    |> Enum.reduce(:crypto.hash_init(:md5), fn(line, acc) -> :crypto.hash_update(acc,line) end ) 
+    |> :crypto.hash_final 
+    |> Base.encode16 
+    |> String.downcase
+  end
 end

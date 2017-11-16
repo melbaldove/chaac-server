@@ -23,6 +23,8 @@ defmodule ChaacServerWeb.Router do
   scope "/api", ChaacServerWeb do
     pipe_through :api
 
-    resources "/users", UserController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit] do
+      resources "/photos", PhotoController, except: [:new, :edit]
+    end
   end
 end

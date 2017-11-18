@@ -3,8 +3,8 @@ defmodule ChaacServer.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :username, :string
-      add :password, :string
+      add :username, :string, null: false
+      add :password, :string, null: false
 
       timestamps()
     end

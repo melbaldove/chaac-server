@@ -8,7 +8,7 @@ defmodule ChaacServer.Accounts.User do
   schema "users" do
     field :password, :string
     field :username, :string
-
+    has_many :photos, ChaacServer.Photos.Photo
     timestamps()
   end
 

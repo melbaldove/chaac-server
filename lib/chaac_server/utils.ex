@@ -21,8 +21,10 @@ defmodule ChaacServer.Utils do
     |> String.downcase
   end
 
+  def checksum(nil), do: {:error, "path required"}
+  def checksum(""), do: checksum(nil)
   def checksum(file) do
-    File.stream!(file,[],2048) 
+    checksum = File.stream!(file,[],2048) 
     |> Enum.reduce(:crypto.hash_init(:md5), fn(line, acc) -> :crypto.hash_update(acc,line) end ) 
     |> :crypto.hash_final 
     |> Base.encode16 

@@ -3,8 +3,8 @@ defmodule ChaacServer.Repo.Migrations.CreatePhotos do
 
   def change do
     create table(:photos) do
-      add :checksum, :string
-      add :path, :string
+      add :checksum, :string, null: false
+      add :path, :string, null: false
       add :caption, :string
       add :remarks, :string
       add :created_date, :date

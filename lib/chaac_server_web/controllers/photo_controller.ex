@@ -3,6 +3,7 @@ defmodule ChaacServerWeb.PhotoController do
 
   alias ChaacServer.Photos
   alias ChaacServer.Photos.Photo
+  alias ChaacServer.Accounts
 
   action_fallback ChaacServerWeb.FallbackController
 
@@ -11,12 +12,12 @@ defmodule ChaacServerWeb.PhotoController do
     render(conn, "index.json", photos: photos)
   end
 
-  def create(conn, %{"photo" => photo_params}) do
-    with {:ok, %Photo{} = photo} <- Photos.create_photo(photo_params) do
+  def create(conn, %{"photo" => photo_params, "user_id" => id} = params) do
+    user = Accounts.get_user!(id)
+    with {:ok, %Photo{} = photo} <- Photos.create_photo(photo_params, user) do
       conn
-      |> put_status(:created)
-      |> put_resp_header("location", user_photo_path(conn, :show, photo))
-      |> render("show.json", photo: photo)
+      |> put_status(:created)      
+      |> render("show.json", photo: photo)      
     end
   end
 

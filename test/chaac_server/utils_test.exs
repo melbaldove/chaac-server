@@ -15,7 +15,6 @@ defmodule ChaacServer.UtilsTest do
   end
   
   test "checksum/1 returns correct checksum for file" do
-    IO.puts Path.expand @test_file
     checksum = Path.expand(@test_file)
     |> Utils.checksum
     assert checksum == "fa80ddf05dc43491d57573cc1b2ee010"

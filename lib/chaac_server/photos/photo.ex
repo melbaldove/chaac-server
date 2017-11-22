@@ -10,9 +10,19 @@ defmodule ChaacServer.Photos.Photo do
     field :created_date, :date
     field :path, :string
     field :remarks, :string
-    field :user_id, :id
+    belongs_to :user, ChaacServer.Accounts.User
 
     timestamps()
+  end
+
+  @doc false
+  def new_photo_changeset(%Photo{} = photo, attrs \\ %{}) do
+    # Todo: add foreign key constraint
+    photo
+    |> cast(attrs, [:checksum, :path, :user_id])
+    |> validate_required([:checksum, :path, :user_id])
+    |> foreign_key_constraint(:user_id)
+    |> unique_constraint(:checksum)
   end
 
   @doc false

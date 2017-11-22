@@ -17,4 +17,10 @@ defmodule ChaacServerWeb.FallbackController do
     |> put_status(:not_found)
     |> render(ChaacServerWeb.ErrorView, :"404")
   end
+
+  def call(conn, {:error, :bad_photo}) do
+    conn
+    |> put_status(:bad_request)
+    |> render(ChaacServerWeb.ErrorView, :"400", errors: %{photo: "Bad photo upload"})
+  end
 end

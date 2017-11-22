@@ -5,6 +5,9 @@ defmodule ChaacServer.Photos do
 
   import Ecto.Query, warn: false
   alias ChaacServer.Repo
+  alias ChaacServer.Utils  
+  alias ChaacServer.Accounts
+  alias ChaacServer.PhotoStore
 
   alias ChaacServer.Photos.Photo
 
@@ -46,13 +49,28 @@ defmodule ChaacServer.Photos do
       {:ok, %Photo{}}
 
       iex> create_photo(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+      {:error, :bad_photo}
 
   """
-  def create_photo(attrs \\ %{}) do
-    %Photo{}
-    |> Photo.changeset(attrs)
-    |> Repo.insert()
+  def create_photo(%Plug.Upload{} = uploaded_photo, %Accounts.User{} = user) do
+    checksum = Utils.checksum(uploaded_photo.path)
+    store_photo(uploaded_photo, user, checksum)
+  end
+  def create_photo(uploaded_photo, %Accounts.User{} = user) when is_binary(uploaded_photo) do
+    checksum = Utils.checksum(uploaded_photo)
+    store_photo(uploaded_photo, user, checksum)    
+  end
+  def create_photo(_, _) do
+    {:error, :bad_photo}
+  end
+  defp store_photo(uploaded_photo, user, checksum) do
+    with {:ok, photo_file} <- PhotoStore.store({uploaded_photo, user}),
+         url = PhotoStore.url({photo_file, user})
+    do
+      Ecto.build_assoc(user, :photos, checksum: checksum, path: url)
+      |> Photo.new_photo_changeset
+      |> Repo.insert
+    end
   end
 
   @doc """

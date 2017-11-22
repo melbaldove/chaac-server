@@ -45,7 +45,7 @@ defmodule ChaacServerWeb.PhotoControllerTest do
         "caption" => nil,
         "checksum" => @checksum,
         "created_date" => nil,
-        "path" => "/uploads/user/photos/test/original.jpg",
+        "path" => "/uploads/user/photos/test/original_#{@checksum}.jpg",
         "remarks" => nil}
     end
 

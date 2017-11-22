@@ -64,8 +64,8 @@ defmodule ChaacServer.Photos do
     {:error, :bad_photo}
   end
   defp store_photo(uploaded_photo, user, checksum) do
-    with {:ok, photo_file} <- PhotoStore.store({uploaded_photo, user}),
-         url = PhotoStore.url({photo_file, user})
+    with {:ok, photo_file} <- PhotoStore.store({uploaded_photo, %{user: user, checksum: checksum}}),
+         url = PhotoStore.url({photo_file, %{user: user, checksum: checksum}})
     do
       Ecto.build_assoc(user, :photos, checksum: checksum, path: url)
       |> Photo.new_photo_changeset

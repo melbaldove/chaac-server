@@ -1,6 +1,7 @@
 defmodule ChaacServer.PhotoStore do
   use Arc.Definition
   def __storage, do: Arc.Storage.Local 
+  @acl :public_read
 
   # Include ecto support (requires package arc_ecto installed):
   # use Arc.Ecto.Definition
@@ -19,13 +20,13 @@ defmodule ChaacServer.PhotoStore do
   end
 
   # Override the persisted filenames:
-  def filename(version, _) do
-     version
+  def filename(version, {_file, scope}) do
+    "#{version}_#{scope.checksum}"
   end
 
   # Override the storage directory:
-  def storage_dir(version, {_file, scope}) do
-    "uploads/user/photos/#{scope.username}"
+  def storage_dir(version, {_file, %{user: user}}) do
+    "uploads/user/photos/#{user.username}"
   end
 
   # Provide a default URL if there hasn't been a file uploaded

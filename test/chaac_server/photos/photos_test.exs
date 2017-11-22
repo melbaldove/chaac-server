@@ -37,7 +37,7 @@ defmodule ChaacServer.PhotosTest do
       valid_photo = Path.expand(@valid_photo)
       assert {:ok, %Photo{} = photo} = Photos.create_photo(valid_photo, user)
       assert photo.checksum == @checksum
-      assert photo.path == PhotoStore.url({Path.basename(valid_photo), user})
+      assert photo.path == PhotoStore.url({Path.basename(valid_photo), %{user: user, checksum: @checksum}})
     end
 
     test "create_photo/2 with invalid user returns error changeset" do

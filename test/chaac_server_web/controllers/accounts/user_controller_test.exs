@@ -1,4 +1,4 @@
-defmodule ChaacServerWeb.UserControllerTest do
+defmodule ChaacServerWeb.Accounts.UserControllerTest do
   use ChaacServerWeb.ConnCase
 
   alias ChaacServer.Accounts

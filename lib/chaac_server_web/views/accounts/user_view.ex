@@ -1,6 +1,6 @@
-defmodule ChaacServerWeb.UserView do
+defmodule ChaacServerWeb.Accounts.UserView do
   use ChaacServerWeb, :view
-  alias ChaacServerWeb.UserView
+  alias ChaacServerWeb.Accounts.UserView
 
   def render("index.json", %{users: users}) do
     %{data: render_many(users, UserView, "user.json")}

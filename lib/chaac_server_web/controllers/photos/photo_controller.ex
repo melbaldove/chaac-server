@@ -1,4 +1,4 @@
-defmodule ChaacServerWeb.PhotoController do
+defmodule ChaacServerWeb.Photos.PhotoController do
   use ChaacServerWeb, :controller
 
   alias ChaacServer.Photos

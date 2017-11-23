@@ -1,4 +1,4 @@
-defmodule ChaacServerWeb.UserController do
+defmodule ChaacServerWeb.Accounts.UserController do
   use ChaacServerWeb, :controller
 
   alias ChaacServer.Accounts

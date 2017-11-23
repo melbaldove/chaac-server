@@ -1,6 +1,6 @@
-defmodule ChaacServerWeb.PhotoView do
+defmodule ChaacServerWeb.Photos.PhotoView do
   use ChaacServerWeb, :view
-  alias ChaacServerWeb.PhotoView
+  alias ChaacServerWeb.Photos.PhotoView
 
   def render("index.json", %{photos: photos}) do
     %{data: render_many(photos, PhotoView, "photo.json")}

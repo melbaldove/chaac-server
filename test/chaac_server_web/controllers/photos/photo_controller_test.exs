@@ -1,4 +1,4 @@
-defmodule ChaacServerWeb.PhotoControllerTest do
+defmodule ChaacServerWeb.Photos.PhotoControllerTest do
   use ChaacServerWeb.ConnCase
 
   alias ChaacServer.Photos

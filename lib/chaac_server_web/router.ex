@@ -22,7 +22,9 @@ defmodule ChaacServerWeb.Router do
   # Other scopes may use custom stacks.
   scope "/api", ChaacServerWeb do
     pipe_through :api
-
-    resources "/users", UserController, except: [:new, :edit]
+    post "/test/:id", UserController, :test
+    resources "/users", UserController, except: [:new, :edit] do
+      resources "/photos", PhotoController, except: [:new, :edit]
+    end
   end
 end

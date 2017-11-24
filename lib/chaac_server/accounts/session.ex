@@ -3,9 +3,8 @@ defmodule ChaacServer.Accounts.Session do
   import Ecto.Changeset
   alias ChaacServer.Accounts.Session
 
-
   schema "sessions" do
-    field :expiry, :date
+    field :expiry, Ecto.DateTime
     field :token, :string
     belongs_to :user, ChaacServer.Accounts.User
 

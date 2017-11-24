@@ -4,19 +4,17 @@ defmodule ChaacServer.Utils do
   """
   
   @doc """
-  Returns a random `string` from string 
+  Returns a pseudo random `string`
 
   ## Examples
 
-      iex> generate_string("elixir")
+      iex> generate_string()
   """
-  def generate_string(nil) do end
-  def generate_string(string) do
+  def generate_string() do
     import Enum
-    :crypto.hash(:md5, string)
+    :crypto.hash(:sha256, :os.system_time(:millisecond) |> Integer.to_charlist)
     |> Base.encode16
     |> String.codepoints
-    |> take(6)
     |> join
     |> String.downcase
   end

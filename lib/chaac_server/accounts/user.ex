@@ -22,6 +22,11 @@ defmodule ChaacServer.Accounts.User do
 
   def generate_password(%Ecto.Changeset{} = user) do
     user
-    |> Ecto.Changeset.change(password: Utils.generate_string(Map.get(user.changes, :username)))
+    |> Ecto.Changeset.change(
+        password: Utils.generate_string()
+                  |> String.codepoints 
+                  |> Enum.take(6)
+                  |> Enum.join
+    )
   end
 end

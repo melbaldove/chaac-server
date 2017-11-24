@@ -30,13 +30,15 @@ defmodule ChaacServer.AccountsTest do
     end
 
     test "generate_password/1 returns a changeset with generated password with valid changeset" do
-      User.changeset(%User{}, @valid_attrs)
-      |> User.generate_password()
+      assert %Ecto.Changeset{changes: %{password: password}} = changeset = 
+        User.changeset(%User{}, @valid_attrs)
+        |> User.generate_password()
+      assert password
     end
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.password == "fae35e"
+      assert user.password
       assert user.username == "some username"
     end
 

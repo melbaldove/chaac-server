@@ -61,7 +61,6 @@ defmodule ChaacServerWeb.Photos.PhotoControllerTest do
     test "renders photo when data is valid", %{conn: conn, photo: %Photo{id: id} = photo, user: %Accounts.User{} = user} do
       conn = put conn, user_photo_path(conn, :update, user.id, photo), photo: @update_attrs
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
       conn = get conn, user_photo_path(conn, :show, user.id, id)
       assert json_response(conn, 200)["data"] == %{
         "id" => id,

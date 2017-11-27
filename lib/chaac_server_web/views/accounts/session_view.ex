@@ -9,6 +9,10 @@ defmodule ChaacServerWeb.Accounts.SessionView do
   def render("show.json", %{session: session}) do
     %{data: render_one(session, SessionView, "session.json")}
   end
+  
+  def render("show.json", %{token: token}) do
+    %{data: %{token: token}}
+  end
 
   def render("session.json", %{session: session}) do
     %{id: session.id,

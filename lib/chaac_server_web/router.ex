@@ -24,7 +24,9 @@ defmodule ChaacServerWeb.Router do
     pipe_through :api
     resources "/users", Accounts.UserController, except: [:new, :edit] do
       resources "/photos", Photos.PhotoController, except: [:new, :edit]
-      resources "/sessions", Accounts.SessionController, only: [:create, :delete]
     end
+    resources "/sessions", Accounts.SessionController, only: [:create]    
+    delete "/sessions/:token", Accounts.SessionController, :delete
+    
   end
 end

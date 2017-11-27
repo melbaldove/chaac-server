@@ -18,6 +18,12 @@ defmodule ChaacServerWeb.FallbackController do
     |> render(ChaacServerWeb.ErrorView, :"404")
   end
 
+  def call(conn, {:error, error}) when error in [:invalid_credentials, :not_authenticated] do
+    conn
+    |> put_status(:unauthorized)
+    |> render(ChaacServerWeb.ErrorView, :"401", error: error)
+  end
+
   def call(conn, {:error, :bad_photo}) do
     conn
     |> put_status(:bad_request)

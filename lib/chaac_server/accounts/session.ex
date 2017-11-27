@@ -14,7 +14,8 @@ defmodule ChaacServer.Accounts.Session do
   @doc false
   def changeset(%Session{} = session, attrs) do
     session
-    |> cast(attrs, [:token, :expiry])
-    |> validate_required([:token, :expiry])
+    |> cast(attrs, [:token, :expiry, :user_id])
+    |> validate_required([:token, :expiry, :user_id])
+    |> foreign_key_constraint(:user_id)
   end
 end

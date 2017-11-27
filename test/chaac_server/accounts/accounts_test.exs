@@ -30,7 +30,7 @@ defmodule ChaacServer.AccountsTest do
     end
 
     test "generate_password/1 returns a changeset with generated password with valid changeset" do
-      assert %Ecto.Changeset{changes: %{password: password}} = changeset = 
+      assert %Ecto.Changeset{changes: %{password: password}} = 
         User.changeset(%User{}, @valid_attrs)
         |> User.generate_password()
       assert password
@@ -75,62 +75,49 @@ defmodule ChaacServer.AccountsTest do
   describe "sessions" do
     alias ChaacServer.Accounts.Session
 
-    @valid_attrs %{expiry: ~D[2010-04-17], token: "some token"}
-    @update_attrs %{expiry: ~D[2011-05-18], token: "some updated token"}
-    @invalid_attrs %{expiry: nil, token: nil}
-
-    def session_fixture(attrs \\ %{}) do
-      {:ok, session} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Accounts.create_session()
-
+    def session_fixture() do
+      {:ok, session} = Accounts.create_session(user_fixture().id)
+      
       session
     end
 
-    test "list_sessions/0 returns all sessions" do
-      session = session_fixture()
-      assert Accounts.list_sessions() == [session]
+    test "authenticate/2 with valid user creds generates token" do
+      user = user_fixture()
+      assert {:ok, token} = Accounts.authenticate_user(user.username, user.password)
+      assert token
     end
 
-    test "get_session!/1 returns the session with given id" do
-      session = session_fixture()
-      assert Accounts.get_session!(session.id) == session
+    test "authenticate/2 with invalid user returns {:error, :invalid_credentials}" do
+      assert {:error, :invalid_credentials} = Accounts.authenticate_user("some weird", "password")
     end
 
-    test "create_session/1 with valid data creates a session" do
-      assert {:ok, %Session{} = session} = Accounts.create_session(@valid_attrs)
-      assert session.expiry == ~D[2010-04-17]
-      assert session.token == "some token"
+    test "validate_token/2 with valid token and user_id returns token if it exists in user" do
+      session = session_fixture()
+      assert {:ok, token} = Accounts.validate_token(session.user_id, session.token)
+      assert token
+    end
+
+    test "validate_token/2 with invalid token returns {:error, :not_authenticated}" do
+      session = session_fixture()
+      # Token not valid
+      assert {:error, :not_authenticated} = Accounts.validate_token(session.user_id, "some invalid token")      
+    end
+
+    test "create_session/1 with valid user_id creates a session" do
+      user = user_fixture()
+      assert {:ok, %Session{} = session} = Accounts.create_session(user.id)
+      assert session.token
+      assert session.expiry
     end
 
     test "create_session/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_session(@invalid_attrs)
-    end
-
-    test "update_session/2 with valid data updates the session" do
-      session = session_fixture()
-      assert {:ok, session} = Accounts.update_session(session, @update_attrs)
-      assert %Session{} = session
-      assert session.expiry == ~D[2011-05-18]
-      assert session.token == "some updated token"
-    end
-
-    test "update_session/2 with invalid data returns error changeset" do
-      session = session_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_session(session, @invalid_attrs)
-      assert session == Accounts.get_session!(session.id)
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_session(10)
     end
 
     test "delete_session/1 deletes the session" do
       session = session_fixture()
       assert {:ok, %Session{}} = Accounts.delete_session(session)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_session!(session.id) end
-    end
-
-    test "change_session/1 returns a session changeset" do
-      session = session_fixture()
-      assert %Ecto.Changeset{} = Accounts.change_session(session)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_session!(session.token) end
     end
   end
 end

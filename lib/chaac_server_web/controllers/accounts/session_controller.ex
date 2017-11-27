@@ -11,12 +11,11 @@ defmodule ChaacServerWeb.Accounts.SessionController do
     render(conn, "index.json", sessions: sessions)
   end
 
-  def create(conn, %{"session" => session_params}) do
-    with {:ok, %Session{} = session} <- Accounts.create_session(session_params) do
+  def create(conn, %{"user" => user}) do
+    with {:ok, token} <- Accounts.authenticate_user(user["username"], user["password"]) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", user_session_path(conn, :show, session))
-      |> render("show.json", session: session)
+      |> render("show.json", token: token)
     end
   end
 
@@ -33,8 +32,8 @@ defmodule ChaacServerWeb.Accounts.SessionController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    session = Accounts.get_session!(id)
+  def delete(conn, %{"token" => token}) do
+    session = Accounts.get_session!(token)
     with {:ok, %Session{}} <- Accounts.delete_session(session) do
       send_resp(conn, :no_content, "")
     end

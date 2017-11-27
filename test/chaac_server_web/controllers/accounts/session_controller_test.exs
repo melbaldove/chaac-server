@@ -9,8 +9,14 @@ defmodule ChaacServerWeb.Accounts.SessionControllerTest do
   @invalid_attrs %{expiry: nil, token: nil}
 
   def fixture(:session) do
-    {:ok, session} = Accounts.create_session(@create_attrs)
+    user = fixture(:user)
+    {:ok, session} = Accounts.create_session(user.id)
     session
+  end
+
+  def fixture(:user) do
+    {:ok, user} = Accounts.create_user(%{username: "some username"})
+    user
   end
 
   setup %{conn: conn} do
@@ -24,31 +30,25 @@ defmodule ChaacServerWeb.Accounts.SessionControllerTest do
   end
 
   describe "create session" do
-    test "renders session when data is valid", %{conn: conn} do
-      
+    test "returns token when user credentials are valid", %{conn: conn} do
+      user = fixture(:user)
+      conn = post conn, session_path(conn, :create), user: %{username: user.username, password: user.password}
+      assert %{"token" => token} = json_response(conn, 201)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
+      conn = post conn, session_path(conn, :create), user: %{username: "some user", password: "some password"}
+      assert json_response(conn, 401)["errors"] != %{}
     end
   end
 
-  describe "update session" do
-    setup [:create_session]
-
-    test "renders session when data is valid", %{conn: conn, session: %Session{id: id} = session} do
-      
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, session: session} do
-      
-    end
-  end
 
   describe "delete session" do
     setup [:create_session]
 
     test "deletes chosen session", %{conn: conn, session: session} do
-      
+      conn = delete conn, session_path(conn, :delete, session.token)
+      assert response(conn, 204)
     end
   end
 

@@ -5,7 +5,9 @@ defmodule ChaacServerWeb.Photos.PhotoController do
   alias ChaacServer.Photos.Photo
   alias ChaacServer.Accounts
 
+  plug ChaacServerWeb.Plugs.Authentication    
   action_fallback ChaacServerWeb.FallbackController
+
 
   def index(conn, _params) do
     photos = Photos.list_photos()

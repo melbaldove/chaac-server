@@ -4,9 +4,8 @@ defmodule ChaacServer.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias ChaacServer.Repo
+  alias ChaacServer.{Repo, Utils, Accounts.User}
 
-  alias ChaacServer.Accounts.User
 
   @doc """
   Returns the list of users.
@@ -106,16 +105,44 @@ defmodule ChaacServer.Accounts do
   alias ChaacServer.Accounts.Session
 
   @doc """
-  Returns the list of sessions.
+  Authenticates a user
 
   ## Examples
+      iex> authenticate_user(username, password)
+      {:ok, token}
 
-      iex> list_sessions()
-      [%Session{}, ...]
-
+      iex> authenticate_user(invalid_username, invalid_password)
+      {:error, :invalid_credentials}
   """
-  def list_sessions do
-    Repo.all(Session)
+  def authenticate_user(username, password) do
+    with %User{} = user <- Repo.get_by(User, username: username, password: password),
+         {:ok, session} <- create_session(user.id)
+    do
+      {:ok, session.token}         
+    else
+      _ -> {:error, :invalid_credentials}
+    end
+  end
+
+  @doc """
+  Validates a token for a user
+
+  ## Examples
+      
+      iex> validate_token(user_id, valid_token)
+      {:ok, valid_token}
+
+      iex> validate_token(user_id, invalid_token)
+      {:error, :not_authenticated}
+  """
+  def validate_token(user_id, token) when is_binary(token) do
+    case Repo.get_by(Session, user_id: user_id, token: token) do
+      nil -> {:error, :not_authenticated}
+      session -> {:ok, session.token}
+    end
+  end
+  def validate_token(_, _) do
+    {:error, :not_authenticated}
   end
 
   @doc """
@@ -132,42 +159,26 @@ defmodule ChaacServer.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_session!(id), do: Repo.get!(Session, id)
+  def get_session!(token), do: Repo.get_by!(Session, token: token)
 
   @doc """
   Creates a session.
 
   ## Examples
 
-      iex> create_session(%{field: value})
+      iex> create_session(valid_user_id)
       {:ok, %Session{}}
 
-      iex> create_session(%{field: bad_value})
+      iex> create_session(invalid_user_id)
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_session(attrs \\ %{}) do
+  def create_session(user_id) do
+    token = Utils.generate_string
+    date = Ecto.DateTime.utc
     %Session{}
-    |> Session.changeset(attrs)
+    |> Session.changeset(%{token: token, expiry: date, user_id: user_id})
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a session.
-
-  ## Examples
-
-      iex> update_session(session, %{field: new_value})
-      {:ok, %Session{}}
-
-      iex> update_session(session, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_session(%Session{} = session, attrs) do
-    session
-    |> Session.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
@@ -184,18 +195,5 @@ defmodule ChaacServer.Accounts do
   """
   def delete_session(%Session{} = session) do
     Repo.delete(session)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking session changes.
-
-  ## Examples
-
-      iex> change_session(session)
-      %Ecto.Changeset{source: %Session{}}
-
-  """
-  def change_session(%Session{} = session) do
-    Session.changeset(session, %{})
   end
 end

@@ -54,5 +54,5 @@ config :chaac_server, ChaacServer.Repo,
   username: "postgres",
   password: "postgres",
   database: "chaac_server_dev",
-  hostname: "localhost",
+  hostname: "db",
   pool_size: 10

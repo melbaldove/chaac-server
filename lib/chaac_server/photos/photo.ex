@@ -28,8 +28,6 @@ defmodule ChaacServer.Photos.Photo do
   @doc false
   def changeset(%Photo{} = photo, attrs) do
     photo
-    |> cast(attrs, [:checksum, :path, :caption, :remarks, :created_date])
-    |> validate_required([:checksum, :path, :caption, :remarks, :created_date])
-    |> unique_constraint(:checksum)
+    |> cast(attrs, [:caption, :remarks, :created_date])
   end
 end

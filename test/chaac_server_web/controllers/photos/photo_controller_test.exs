@@ -8,7 +8,6 @@ defmodule ChaacServerWeb.Photos.PhotoControllerTest do
   @valid_photo "test/chaac_server/photos/TestPhoto.jpg"  
   @checksum "fd0718a2854df251cfa264162a04fc31"  
   @update_attrs %{caption: "some updated caption", checksum: "some updated checksum", created_date: ~D[2011-05-18], path: "some updated path", remarks: "some updated remarks"}
-  @invalid_attrs %{caption: nil, checksum: nil, created_date: nil, path: nil, remarks: nil}
 
   def fixture(:photo, user) do
     {:ok, photo} = Photos.create_photo(@valid_photo, user)
@@ -67,17 +66,12 @@ defmodule ChaacServerWeb.Photos.PhotoControllerTest do
       assert json_response(response, 200)["data"] == %{
         "id" => id,
         "caption" => "some updated caption",
-        "checksum" => "some updated checksum",
+        "checksum" => photo.checksum,
         "created_date" => "2011-05-18",
-        "path" => "some updated path",
+        "path" => photo.path,
         "remarks" => "some updated remarks"}
     end
 
-    test "renders errors when data is invalid", %{conn: conn, user: user} do
-      photo = fixture(:photo, user)      
-      response = put conn, user_photo_path(conn, :update, user.id, photo), photo: @invalid_attrs
-      assert json_response(response, 422)["errors"] != %{}
-    end
   end
 
   describe "delete photo" do

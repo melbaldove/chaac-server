@@ -24,7 +24,7 @@ defmodule ChaacServerWeb.Photos.PhotoControllerTest do
 
   setup %{conn: conn} do
     user = fixture(:user)
-    {:ok, token} = Accounts.authenticate_user(user.username, user.password)
+    {:ok, %{"token" => token, "userId" => _}} = Accounts.authenticate_user(user.username, user.password)
     {:ok, conn: conn |> put_req_header("accept", "application/json") 
                      |> put_req_header("authorization", token) , user: user}
   end

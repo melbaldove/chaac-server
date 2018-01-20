@@ -118,7 +118,7 @@ defmodule ChaacServer.Accounts do
     with %User{} = user <- Repo.get_by(User, username: username, password: password),
          {:ok, session} <- create_session(user.id)
     do
-      {:ok, session.token}         
+      {:ok, %{"token" => session.token, "userId" => user.id}}         
     else
       _ -> {:error, :invalid_credentials}
     end

@@ -16,7 +16,7 @@ defmodule ChaacServerWeb.AuthenticationTest do
 
   test "authentication plug should return conn on valid token", %{conn: conn} do
     user = fixture(:user)
-    {:ok, token} = Accounts.authenticate_user(user.username, user.password)
+    {:ok, %{"token" => token, "userId" => _}} = Accounts.authenticate_user(user.username, user.password)
     conn = conn
     |> put_req_header("authorization", token )    
     |> Map.put(:params, %{"user_id" => user.id})    

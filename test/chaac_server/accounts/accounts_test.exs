@@ -83,7 +83,7 @@ defmodule ChaacServer.AccountsTest do
 
     test "authenticate/2 with valid user creds generates token" do
       user = user_fixture()
-      assert {:ok, token} = Accounts.authenticate_user(user.username, user.password)
+      assert {:ok, %{"token" => _, "userId" => _ } = token} = Accounts.authenticate_user(user.username, user.password)
       assert token
     end
 

@@ -14,7 +14,6 @@ defmodule ChaacServer.PhotosTest do
 
     def photo_fixture() do
       {:ok, photo} = Photos.create_photo(@valid_photo, user_fixture())
-
       photo
     end
 

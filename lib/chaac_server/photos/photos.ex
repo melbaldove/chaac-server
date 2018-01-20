@@ -104,6 +104,8 @@ defmodule ChaacServer.Photos do
 
   """
   def delete_photo(%Photo{} = photo) do
+    user = Accounts.get_user!(photo.user_id)
+    PhotoStore.delete({photo.path, %{user: user, checksum: photo.checksum}})
     Repo.delete(photo)
   end
 

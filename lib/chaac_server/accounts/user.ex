@@ -9,6 +9,7 @@ defmodule ChaacServer.Accounts.User do
     field :password, :string
     field :username, :string
     has_many :photos, ChaacServer.Photos.Photo
+    has_many :sessions, ChaacServer.Accounts.Session 
     timestamps()
   end
 

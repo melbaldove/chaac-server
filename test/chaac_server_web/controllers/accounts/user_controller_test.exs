@@ -30,10 +30,12 @@ defmodule ChaacServerWeb.Accounts.UserControllerTest do
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get conn, user_path(conn, :show, id)
-      assert json_response(conn, 200)["data"] == %{
-        "id" => id,
-        "password" => "fae35e",
-        "username" => "some username"}
+      assert %{"password" => password,
+                "id" => ^id,
+                "username" => "some username"
+              } = json_response(conn, 200)["data"]
+          
+      assert password
     end
 
     test "renders errors when data is invalid", %{conn: conn} do

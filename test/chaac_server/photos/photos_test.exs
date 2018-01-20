@@ -14,7 +14,6 @@ defmodule ChaacServer.PhotosTest do
 
     def photo_fixture() do
       {:ok, photo} = Photos.create_photo(@valid_photo, user_fixture())
-
       photo
     end
 
@@ -56,20 +55,12 @@ defmodule ChaacServer.PhotosTest do
       assert {:ok, photo} = Photos.update_photo(photo, @update_attrs)
       assert %Photo{} = photo
       assert photo.caption == "some updated caption"
-      assert photo.checksum == "some updated checksum"
       assert photo.created_date == ~D[2011-05-18]
-      assert photo.path == "some updated path"
       assert photo.remarks == "some updated remarks"
     end
 
-    test "update_photo/2 with invalid data returns error changeset" do
-      photo = photo_fixture()
-      assert {:error, %Ecto.Changeset{}} = Photos.update_photo(photo, @invalid_attrs)
-      assert photo == Photos.get_photo!(photo.id)
-    end
-
     test "delete_photo/1 deletes the photo" do
-      photo = photo_fixture()
+      photo = photo_fixture() 
       assert {:ok, %Photo{}} = Photos.delete_photo(photo)
       assert_raise Ecto.NoResultsError, fn -> Photos.get_photo!(photo.id) end
     end
